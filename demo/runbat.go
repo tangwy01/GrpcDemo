@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"os/exec"
 	"syscall"
+	"time"
 
 	"github.com/axgle/mahonia"
 )
 
 const (
-	batPath = "C:\\Users\\Tang\\Documents\\WXWork\\1688852916302708\\Cache\\File\\2019-03\\CallBat\\bin\\Debug\\ci\\build.cmd"
+	batPath = `D:\WorkSpace\源代码\70\Test\ERP352SP4\ci\build.bat`
 )
 
 func main() {
@@ -30,14 +31,14 @@ func build(path string) {
 			case status.Exited():
 				exitCode = status.ExitStatus()
 			}
-		} else {
-			fmt.Printf("Return other error: %s\n", err)
 		}
 	}
+
 	if exitCode != 0 {
 
 	}
 	fmt.Printf("in all caps: %q\n", Encoding(out.String(), "gbk", "utf8"))
+	time.Sleep(5 * time.Minute)
 }
 
 //编码转换
@@ -49,3 +50,16 @@ func Encoding(input string, srcCode string, tagCode string) string {
 	result := string(cdata)
 	return result
 }
+
+// @echo off
+// rem 准备编译......
+
+// %~d0
+// cd %~dp0
+// C:\Windows\Microsoft.NET\Framework64\v3.5\msbuild.exe ../分支2/明源整体解决方案/明源整体解决方案.sln  /t:Build /p:Configuration="Debug"
+// if errorlevel 1 goto errorDone
+
+// exit /b 0
+
+// :errorDone
+// exit /b 2
