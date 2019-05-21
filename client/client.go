@@ -5,7 +5,6 @@ import (
 	"log"
 	pb "proto"
 
-	pbb "github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -45,7 +44,7 @@ func getCustomers(client pb.CustomerClient, filter *pb.CustomerFilter) {
 	}
 }
 
-func getCustomersInter(client pb.CustomerClient, filter *pb.CustomerFilter) {
+func getCustomersInter(client pb.CustomerClient, filter *pb.Role) {
 	// calling the streaming API
 	stream, err := client.GetCustomersInterfac(context.Background(), filter)
 	if err != nil {
@@ -57,12 +56,12 @@ func getCustomersInter(client pb.CustomerClient, filter *pb.CustomerFilter) {
 		if err == io.EOF {
 			break
 		}
-		face := &pb.CustomerRequest{}
-		pbb.Unmarshal(data.Cont, face)
+		// face := &pb.CustomerRequest{}
+		// pbb.Unmarshal(data.Cont, face)
 		if err != nil {
 			log.Fatalf("%v.GetCustomers(_) = _, %v", client, err)
 		}
-		log.Printf("Customer: %v", face)
+		log.Printf("Customer: %v", data)
 	}
 }
 func main() {
@@ -118,10 +117,14 @@ func main() {
 	}
 
 	// Create a new customer
-	createCustomer(client, customer)
-	// Filter with an empty Keyword
-	filter := &pb.CustomerFilter{Keyword: ""}
-	getCustomers(client, filter)
-	filter1 := &pb.CustomerFilter{Keyword: ""}
-	getCustomersInter(client, filter1)
+	// createCustomer(client, customer)
+	// // Filter with an empty Keyword
+	// filter := &pb.CustomerFilter{Keyword: ""}
+	// getCustomers(client, filter)
+	// filter1 := &pb.CustomerFilter{Keyword: ""}
+	role := pb.Role{
+		Id:       "100000000000000000000000000000001",
+		RoleType: pb.Role_worker,
+	}
+	getCustomersInter(client, &role)
 }

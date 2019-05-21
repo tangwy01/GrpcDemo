@@ -1,12 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	pb "proto"
 	"strings"
 
-	pbb "github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 )
@@ -40,18 +40,26 @@ func (s *server) GetCustomers(filter *pb.CustomerFilter, stream pb.Customer_GetC
 	}
 	return nil
 }
-func (s *server) GetCustomersInterfac(filter *pb.CustomerFilter, stream pb.Customer_GetCustomersInterfacServer) error {
+func (s *server) GetCustomersInterfac(filter *pb.Role, stream pb.Customer_GetCustomersInterfacServer) error {
 	for _, customer := range s.savedCustomers {
-		if filter.Keyword != "" {
-			if !strings.Contains(customer.Name, filter.Keyword) {
-				continue
-			}
+		// if filter.Keyword != "" {
+		// 	if !strings.Contains(customer.Name, filter.Keyword) {
+		// 		continue
+		// 	}
+		// }
+		fmt.Println(customer)
+		maps := map[string]string{"name": "tangwy", "age": "14"}
+		config := pb.Config{
+			ConfigMap: maps,
 		}
-		data, _ := pbb.Marshal(customer)
-		cusface := pb.CustomersInterface{
-			Cont: data,
-		}
-		if err := stream.Send(&cusface); err != nil {
+		// data, _ := pbb.Marshal(&config)
+		// cusface := pb.CustomersInterface{
+		// 	Cont: data,
+		// }
+		role := pb.Role{}
+		role.Id = filter.Id
+		fmt.Printf(role.GetId())
+		if err := stream.Send(&config); err != nil {
 			return err
 		}
 	}
@@ -66,4 +74,10 @@ func main() {
 	s := grpc.NewServer()
 	pb.RegisterCustomerServer(s, &server{})
 	s.Serve(lis)
+}
+
+type Persion struct {
+	Name    string
+	Age     int
+	Address string
 }

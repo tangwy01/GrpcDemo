@@ -8,7 +8,7 @@ service Customer {
   rpc GetCustomers(CustomerFilter) returns (stream CustomerRequest) {}
   // Create a new Customer - A simple RPC 
   rpc CreateCustomer (CustomerRequest) returns (CustomerResponse) {}
-  rpc GetCustomersInterfac(CustomerFilter) returns (stream CustomersInterface) {}
+  rpc GetCustomersInterfac(Role) returns (stream Config) {}
 }
 
 // Request message for creating a new customer
@@ -36,6 +36,14 @@ message CustomerResponse {
 message CustomerFilter {    
   string keyword = 1;
 }
-message CustomersInterface{
-  bytes cont=1;
+message Config{
+  map<string,string> configMap = 1;
+}
+message Role{
+  string id=1;
+  enum type {
+    worker =0;
+    console=1;
+  }
+  type roleType=2;
 }
